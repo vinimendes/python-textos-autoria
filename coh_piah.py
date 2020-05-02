@@ -4,19 +4,20 @@ def le_assinatura():
     print("Bem-vindo ao detector automático de COH-PIAH.")
     print("Informe a assinatura típica de um aluno infectado:")
 
-    wal = float(input("Entre o tamanho médio de palavra:"))
-    ttr = float(input("Entre a relação Type-Token:"))
-    hlr = float(input("Entre a Razão Hapax Legomana:"))
-    sal = float(input("Entre o tamanho médio de sentença:"))
-    sac = float(input("Entre a complexidade média da sentença:"))
-    pal = float(input("Entre o tamanho medio de frase:"))
+    wal = float(input("Entre o tamanho médio de palavra: "))
+    ttr = float(input("Entre a relação Type-Token: "))
+    hlr = float(input("Entre a Razão Hapax Legomana: "))
+    sal = float(input("Entre o tamanho médio de sentença: "))
+    sac = float(input("Entre a complexidade média da sentença: "))
+    pal = float(input("Entre o tamanho medio de frase: "))
 
     return [wal, ttr, hlr, sal, sac, pal]
 
 def removendo_pontos(texto):
     carac = ""
     for i in texto:
-        if not (i == "." or i == "," or i == ":" or i == ";"):
+        if not (i == "." or i == "," or i == ":" or i == ";" 
+               or i == "(" or i == ")" or i == '"' or i == "[" or i == "]"):
             carac = carac + i
     return carac
 
@@ -68,8 +69,17 @@ def n_palavras_diferentes(lista_palavras):
     return len(freq)
 
 def compara_assinatura(as_a, as_b):
+    textos = as_a
+    ass_cp = as_b
+    listaValorAss = []
+    for i in textos:
+        listaF = []
+        listaA = calcula_assinatura(i)
+        for i in range(0, 6):
+            listaF.append(abs(listaA[i] - ass_cp[i]))
+        listaValorAss.append(float(sum(listaF) / 6))
+    return listaValorAss
 
-    pass
 def calcula_assinatura(texto):
     # Calc WAL
     palavrasSemPonto = removendo_pontos(texto)
@@ -104,17 +114,32 @@ def calcula_assinatura(texto):
         for i in listFrase:
             totalCarac = totalCarac + len(i)
     novoPal = float(totalCarac / total)
-    
+
     return [novoWal, novoTtr, novoHlr, novoSal, novoSac, novoPal]
 
 
 
-
-
 def avalia_textos(textos, ass_cp):
-    pass
+    listaValorAss = compara_assinatura(textos, ass_cp)
+    # Compara qual texto 
+    numInd = 1
+    
+    for i in listaValorAss:
+        if numInd < len(listaValorAss):
+            if i > listaValorAss[numInd]:
+                menorValor = listaValorAss[numInd]
+                numDoTexto = numInd
 
-# Testando os calculos de assinatura com esse exemplo de texto
-texto = "Muito além, nos confins inexplorados da região mais brega da Borda Ocidental desta Galáxia, há um pequeno sol amarelo e esquecido. Girando em torno deste sol, a uma distancia de cerca de 148 milhões de quilômetros, há um planetinha verde-azulado absolutamente insignificante, cujas formas de vida, descendentes de primatas, são tão extraordinariamente primitivas que ainda acham que relógios digitais são uma grande ideia."
+            else:
+                menorValor = i
+                numDoTexto = numInd - 1
+            numInd += 1
+    resultado = numDoTexto + 1
+    return resultado
 
-print(calcula_assinatura(texto))
+# Inicio do Programa
+
+ass_cp = le_assinatura()
+textos = le_textos()
+
+print("O autor do texto " + str(avalia_textos(textos, ass_cp)) + " está infectado com COH-PIAH")
