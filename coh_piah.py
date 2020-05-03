@@ -21,6 +21,28 @@ def removendo_pontos(texto):
             carac = carac + i
     return carac
 
+def adiciona_espacos(texto):
+    listaFormat = []
+    textoReturn = ""
+    for i in texto:
+        listaFormat.append(i)
+    vIndex = 1
+    for i in listaFormat:
+        if vIndex >= len(listaFormat):
+            vIndex -= 1
+
+        if (i == ";" or i == "," or i == "." 
+           or i == ":") and listaFormat[vIndex] != " ":
+            
+            listaFormat[listaFormat.index(i)] = " "
+            textoReturn = textoReturn + " "
+            vIndex += 1
+        else:
+            textoReturn = textoReturn + i
+            vIndex += 1
+    return textoReturn
+
+
 def le_textos():
     i = 1
     textos = []
@@ -41,7 +63,6 @@ def separa_frases(sentenca):
     return re.split(r'[,:;]+', sentenca)
 
 def separa_palavras(frase):
-    
     return frase.split()
 
 def n_palavras_unicas(lista_palavras):
@@ -69,20 +90,20 @@ def n_palavras_diferentes(lista_palavras):
     return len(freq)
 
 def compara_assinatura(as_a, as_b):
-    textos = as_a
+    ass1 = as_a
     ass_cp = as_b
-    listaValorAss = []
-    for i in textos:
-        listaF = []
-        listaA = calcula_assinatura(i)
-        for i in range(0, 6):
-            listaF.append(abs(listaA[i] - ass_cp[i]))
-        listaValorAss.append(float(sum(listaF) / 6))
-    return listaValorAss
+    listaF = []
+        
+    for i in range(0, 6):
+        listaF.append(abs(ass1[i] - ass_cp[i]))
+    valorAssFinal = float(sum(listaF) / 6)
+
+    return valorAssFinal
 
 def calcula_assinatura(texto):
     # Calc WAL
-    palavrasSemPonto = removendo_pontos(texto)
+    TextoFormat = adiciona_espacos(texto)
+    palavrasSemPonto = removendo_pontos(TextoFormat)
     listaPalavras = separa_palavras(palavrasSemPonto)
     total = 0
     for i in listaPalavras:
@@ -120,10 +141,17 @@ def calcula_assinatura(texto):
 
 
 def avalia_textos(textos, ass_cp):
-    listaValorAss = compara_assinatura(textos, ass_cp)
-    # Compara qual texto 
+    # Avalia cada texto
+
+    listaValorAss = []
+    for i in textos:
+        assNovas = calcula_assinatura(i)
+        resulAvaliacAB = compara_assinatura(assNovas, ass_cp)
+        listaValorAss.append(resulAvaliacAB)
+    # Compara qual texto
+
     numInd = 1
-    
+    numDoTexto = 0
     for i in listaValorAss:
         if numInd < len(listaValorAss):
             if i > listaValorAss[numInd]:
